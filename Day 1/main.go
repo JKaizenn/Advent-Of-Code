@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"sort"
 	"strings"
 
 	"github.com/joho/godotenv"
@@ -44,6 +45,10 @@ func main() {
 		fmt.Println("Error parsing input:", err)
 		os.Exit(1)
 	}
+
+	// Compute and print the total minimal distance
+	totalDistance := computeTotalDistance(left, right)
+	fmt.Println("Total minimal distance:", totalDistance)
 
 	// Compute and print the similarity score
 	similarityScore := computeSimilarityScore(left, right)
@@ -108,7 +113,22 @@ func parseInput(data []byte) ([]int, []int, error) {
 	return left, right, nil
 }
 
-// computeSimilarityScore calculates the similarity score (Part Two)
+// computeTotalDistance calculates the total minimal distance
+func computeTotalDistance(left, right []int) int {
+	// Sort both slices
+	sort.Ints(left)
+	sort.Ints(right)
+
+	totalDistance := 0
+	for i := range left {
+		// Compute the absolute difference
+		distance := abs(left[i] - right[i])
+		totalDistance += distance
+	}
+	return totalDistance
+}
+
+// computeSimilarityScore calculates the similarity score
 func computeSimilarityScore(left, right []int) int {
 	// Count occurrences of numbers in the right list
 	rightCount := make(map[int]int)
@@ -124,4 +144,12 @@ func computeSimilarityScore(left, right []int) int {
 	}
 
 	return similarityScore
+}
+
+// abs returns the absolute value of an integer
+func abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
 }
